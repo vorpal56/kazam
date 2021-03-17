@@ -24,6 +24,7 @@ import logging
 logger = logging.getLogger("Indicator")
 
 from gettext import gettext as _
+import gi
 from gi.repository import Gtk, GObject, GLib
 
 from kazam.backend.prefs import *
@@ -102,6 +103,8 @@ class KazamSuperIndicator(GObject.GObject):
         # Setup keybindings - Hardcore way
         #
         try:
+            import gi
+            gi.require_version('Keybinder', '3.0')
             from gi.repository import Keybinder
             logger.debug("Trying to bind hotkeys.")
             Keybinder.init()
@@ -157,6 +160,7 @@ class KazamSuperIndicator(GObject.GObject):
         self.emit("indicator-quit-request")
 
 try:
+    gi.require_version('AppIndicator3', '0.1')
     from gi.repository import AppIndicator3
 
     class KazamIndicator(KazamSuperIndicator):
@@ -231,7 +235,7 @@ try:
             if not self.silent:
                 self.indicator.set_status(AppIndicator3.IndicatorStatus.ATTENTION)
 
-except ImportError:
+except (ImportError, ValueError):
     #
     # AppIndicator failed to import, not running Ubuntu?
     # Fallback to Gtk.StatusIcon.

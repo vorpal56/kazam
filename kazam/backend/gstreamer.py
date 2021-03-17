@@ -20,6 +20,7 @@
 #       MA 02110-1301, USA.
 
 import os
+import gi
 import logging
 logger = logging.getLogger("GStreamer")
 
@@ -32,6 +33,7 @@ import multiprocessing
 os.environ["GST_DEBUG_DUMP_DOT_DIR"] = "/tmp"
 os.putenv("GST_DEBUG_DUMP_DOT_DIR", "/tmp")
 
+gi.require_version('Gst', '1.0')
 from gi.repository import GObject, Gst
 
 from kazam.backend.prefs import *
