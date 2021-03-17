@@ -126,6 +126,13 @@ class Screencast(GObject.GObject):
             endx = startx + width - 1
             endy = starty + height - 1
 
+        scale = self.video_source['scale']
+        startx = startx * scale 
+        starty = starty * scale 
+        endx = endx * scale 
+        endy = endy * scale 
+
+
         #
         # H264 requirement is that video dimensions are divisible by 2.
         # If they are not, we have to get rid of that extra pixel.
