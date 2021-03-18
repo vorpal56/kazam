@@ -293,6 +293,7 @@ class KazamApp(GObject.GObject):
 
         HW.get_current_screen(self.window)
         self.startup = False
+        self.noSelectNextModeActive = False
 
     #
     # Callbacks, go down here ...
@@ -326,16 +327,22 @@ class KazamApp(GObject.GObject):
     # Record mode toggles
     #
     def cb_record_mode_toggled(self, widget):
+        noSelection = False
         if widget.get_active():
             self.current_mode = widget
+            if self.noSelectNextModeActive == True:
+                self.noSelectNextModeActive = False
+                noSelection = True
         else:
             self.last_mode = widget
 
+
         if widget.get_name() == "MODE_AREA" and widget.get_active():
             logger.debug("Area ON.")
-            self.area_window = AreaWindow()
-            self.tmp_sig1 = self.area_window.connect("area-selected", self.cb_area_selected)
-            self.tmp_sig2 = self.area_window.connect("area-canceled", self.cb_area_canceled)
+            if noSelection != True:
+                self.area_window = AreaWindow()
+                self.tmp_sig1 = self.area_window.connect("area-selected", self.cb_area_selected)
+                self.tmp_sig2 = self.area_window.connect("area-canceled", self.cb_area_canceled)
             self.record_mode = MODE_AREA
 
         if widget.get_name() == "MODE_AREA" and not widget.get_active():
@@ -356,11 +363,12 @@ class KazamApp(GObject.GObject):
 
         if widget.get_name() == "MODE_WIN" and widget.get_active():
             logger.debug("Window capture ON.")
-            self.select_window = SelectWindow()
-            self.tmp_sig3 = self.select_window.connect("window-selected", self.cb_window_selected)
-            self.tmp_sig4 = self.select_window.connect("window-canceled", self.cb_window_canceled)
+            if noSelection != True:
+                self.select_window = SelectWindow()
+                self.tmp_sig3 = self.select_window.connect("window-selected", self.cb_window_selected)
+                self.tmp_sig4 = self.select_window.connect("window-canceled", self.cb_window_canceled)
+                self.chk_borders_pic.set_sensitive(True)
             self.record_mode = MODE_WIN
-            self.chk_borders_pic.set_sensitive(True)
 
         if widget.get_name() == "MODE_WIN" and not widget.get_active():
             logger.debug("Window capture OFF.")
@@ -475,6 +483,7 @@ class KazamApp(GObject.GObject):
     def cb_area_canceled(self, widget):
         logger.debug("Area selection canceled.")
         self.window.set_sensitive(True)
+        self.noSelectNextModeActive = True
         self.last_mode.set_active(True)
 
     def cb_window_selected(self, widget):
@@ -487,6 +496,7 @@ class KazamApp(GObject.GObject):
     def cb_window_canceled(self, widget):
         logger.debug("Window selection canceled.")
         self.window.set_sensitive(True)
+        self.noSelectNextModeActive = True
         self.last_mode.set_active(True)
 
     def cb_screen_size_changed(self, screen):
