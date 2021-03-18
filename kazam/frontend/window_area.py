@@ -112,6 +112,7 @@ class AreaWindow(GObject.GObject):
         cur = scr.get_monitor_at_point(x, y)
         self.window.move(HW.screens[cur]['x'],
                          HW.screens[cur]['y'])
+        self.window.present()
         self.window.fullscreen()
 
         crosshair_cursor = Gdk.Cursor(Gdk.CursorType.CROSSHAIR)
