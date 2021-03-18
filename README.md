@@ -1,11 +1,15 @@
 # Kazam
 Kazam is a simple screen recording program that will capture the content of your screen and record a video file that can be played by any video player that supports VP8/WebM video format. Optionally you can record sound from any sound input device that is supported and visible by PulseAudio.
 
-
 ## Latest version
 
 Kazam is always available from [Launchpad](https://launchpad.net/kazam).
 
+## Trying it out without installing
+
+```shell
+bash bin/run_local_dev.sh
+```
 
 ## Installation - stable release
 
@@ -96,8 +100,6 @@ For Ubuntu 12.10 and newer keyboard binder is available in the universe reposito
 
 
 ## Recording Tips
-
-Framerates above 20fps are unlikely to work well because of software and hardware limitations. If you increase framerate and framerate in resulting video drops, that is because encoder can't keep up.
 
 Always do a sound check. Especially if you are recording a live commentary with background sound. I got the best results when I used earphones to listen to the audio while recording. This way your mic will not pick up any audio coming from speakers.
 
