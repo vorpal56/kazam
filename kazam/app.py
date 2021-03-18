@@ -273,6 +273,7 @@ class KazamApp(GObject.GObject):
         self.default_screen = Gdk.Screen.get_default()
         self.default_screen.connect("size-changed", self.cb_screen_size_changed)
         self.window.connect("configure-event", self.cb_configure_event)
+        self.window.connect("delete-event", self.cb_delete_event)
 
         # Fetch sources info, take care of all the widgets and saved settings and show main window
         if prefs.sound:
@@ -560,7 +561,8 @@ class KazamApp(GObject.GObject):
     def cb_delete_event(self, widget, user_data):
         logger.debug(widget)
         logger.debug('cb_delete_event')
-        #self.cb_quit_request(None)
+        self.window.hide()
+        return True
 
     def cb_start_request(self, widget):
         logger.debug("Start recording selected.")
