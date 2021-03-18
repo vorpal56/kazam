@@ -73,7 +73,8 @@ class Preferences(GObject.GObject):
         self.combobox_audio2.pack_start(audio_renderer, True)
         self.combobox_audio2.add_attribute(audio_renderer, "text", 0)
 
-        self.filechooser_video.set_current_folder(prefs.video_dest)
+        if prefs.autosave_video_dir is None:
+            self.filechooser_video.set_current_folder(prefs.video_dest)
 
         self.populate_codecs()
         if prefs.sound:
@@ -317,7 +318,7 @@ class Preferences(GObject.GObject):
             self.entry_autosave_video.set_sensitive(False)
 
     def cb_filechooser_video(self, widget):
-        prefs.autosave_video_dir = self.filechooser_video.get_current_folder()
+        prefs.autosave_video_dir = self.filechooser_video.get_filename()
         logger.debug("Autosave video folder set to: {0}".format(prefs.autosave_video_dir))
 
     def cb_entry_autosave_video(self, widget):
@@ -353,7 +354,7 @@ class Preferences(GObject.GObject):
             self.entry_autosave_picture.set_sensitive(False)
 
     def cb_filechooser_picture(self, widget):
-        prefs.autosave_picture_dir = self.filechooser_picture.get_current_folder()
+        prefs.autosave_picture_dir = self.filechooser_picture.get_filename()
         logger.debug("Autosave picture folder set to: {0}".format(prefs.autosave_picture_dir))
 
     def cb_entry_autosave_picture(self, widget):
