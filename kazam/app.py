@@ -131,6 +131,7 @@ class KazamApp(GObject.GObject):
         self.indicator = KazamIndicator(prefs.silent)
         self.indicator.connect("indicator-quit-request", self.cb_quit_request)
         self.indicator.connect("indicator-show-request", self.cb_show_request)
+        self.indicator.connect("indicator-help-request", self.cb_help_request)
         self.indicator.connect("indicator-start-request", self.cb_start_request)
         self.indicator.connect("indicator-stop-request", self.cb_stop_request)
         self.indicator.connect("indicator-pause-request", self.cb_pause_request)
@@ -279,16 +280,16 @@ class KazamApp(GObject.GObject):
         if prefs.sound:
             prefs.get_audio_sources()
 
+        self.instructions = ("""  SUPER-CTRL-W to toggle main window.\n"""
+                             """  SUPER-CTRL-R to start recording.\n"""
+                             """  SUPER-CTRL-F to finish recording.\n"""
+                             """  SUPER-CTRL-P to pause/resume recording.\n"""
+                             """  SUPER-CTRL-Q to quit.\n""")
+
         #if not prefs.silent:
         #    self.window.show_all()
         #else:
-            logger.info("""Starting in silent mode:\n"""
-                        """  SUPER-CTRL-W to toggle main window.\n"""
-                        """  SUPER-CTRL-R to start recording.\n"""
-                        """  SUPER-CTRL-F to finish recording.\n"""
-                        """  SUPER-CTRL-P to pause/resume recording.\n"""
-                        """  SUPER-CTRL-Q to quit.\n"""
-                        )
+        logger.info("""Starting in silent mode:\n""" + self.instructions)
 
         self.restore_UI()
 
@@ -540,6 +541,15 @@ class KazamApp(GObject.GObject):
         logger.debug("Preferences requested.")
         self.preferences_window = Preferences()
         self.preferences_window.open()
+
+    def cb_help_request(self, indicator):
+        messagedialog = Gtk.MessageDialog(parent=self.window,
+            flags=Gtk.DialogFlags.MODAL,
+            type=Gtk.MessageType.WARNING,
+            buttons=Gtk.ButtonsType.OK,
+            message_format=self.instructions)
+        messagedialog.run()
+        messagedialog.destroy()
 
     def cb_show_request(self, indicator):
         if not self.window.get_property("visible"):

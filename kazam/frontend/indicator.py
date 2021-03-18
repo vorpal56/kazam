@@ -43,6 +43,9 @@ class KazamSuperIndicator(GObject.GObject):
         "indicator-show-request" : (GObject.SIGNAL_RUN_LAST,
                                     None,
                                     (), ),
+        "indicator-help-request" : (GObject.SIGNAL_RUN_LAST,
+                                    None,
+                                    (), ),
         "indicator-stop-request" : (GObject.SIGNAL_RUN_LAST,
                                     None,
                                     (), ),
@@ -86,6 +89,10 @@ class KazamSuperIndicator(GObject.GObject):
 
         self.menuitem_separator2 = Gtk.SeparatorMenuItem()
 
+        self.menuitem_help = Gtk.MenuItem(_("Help"))
+        self.menuitem_help.set_sensitive(True)
+        self.menuitem_help.connect("activate", self.on_menuitem_help_activate)
+
         self.menuitem_quit = Gtk.MenuItem(_("Quit"))
         self.menuitem_quit.connect("activate", self.on_menuitem_quit_activate)
 
@@ -94,6 +101,7 @@ class KazamSuperIndicator(GObject.GObject):
         self.menu.append(self.menuitem_start)
         self.menu.append(self.menuitem_pause)
         self.menu.append(self.menuitem_finish)
+        self.menu.append(self.menuitem_help)
         self.menu.append(self.menuitem_separator2)
         self.menu.append(self.menuitem_quit)
 
@@ -146,6 +154,10 @@ class KazamSuperIndicator(GObject.GObject):
     def on_menuitem_settings_activate(self, menuitem):
         logger.debug('on_menuitem_settings_activate')
         self.emit('indicator-show-request')
+
+    def on_menuitem_help_activate(self, menuitem):
+        logger.debug('on_menuitem_help_activate')
+        self.emit('indicator-help-request')
 
     def on_menuitem_finish_activate(self, menuitem):
         self.recording = False
