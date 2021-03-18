@@ -94,6 +94,7 @@ class KazamApp(GObject.GObject):
                 prefs.sound = False
 
         self.icons = Gtk.IconTheme.get_default()
+        self.icons.append_search_path(datadir)
         self.default_cursor = Gdk.Cursor(Gdk.CursorType.LEFT_PTR)
 
         # Initialize all the variables
