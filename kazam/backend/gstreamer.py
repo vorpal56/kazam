@@ -126,11 +126,12 @@ class Screencast(GObject.GObject):
             endx = startx + width - 1
             endy = starty + height - 1
 
-        scale = self.video_source['scale']
-        startx = startx * scale 
-        starty = starty * scale 
-        endx = endx * scale 
-        endy = endy * scale 
+        if 'scale' in self.video_source:
+            scale = self.video_source['scale']
+            startx = startx * scale 
+            starty = starty * scale 
+            endx = endx * scale 
+            endy = endy * scale 
 
 
         #
