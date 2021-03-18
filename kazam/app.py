@@ -140,6 +140,7 @@ class KazamApp(GObject.GObject):
 
         self.mainmenu.connect("file-quit", self.cb_quit_request)
         self.mainmenu.connect("file-preferences", self.cb_preferences_request)
+        self.mainmenu.connect("help-help", self.cb_help_request)
         self.mainmenu.connect("help-about", self.cb_help_about)
 
         #

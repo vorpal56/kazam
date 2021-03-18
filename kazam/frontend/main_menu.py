@@ -31,6 +31,7 @@ MENUBAR = """
                 <menuitem action='FileQuit' />
             </menu>
             <menu action='HelpMenu'>
+                <menuitem action='HelpHelp' />
                 <menuitem action='HelpAbout' />
             </menu>
         </menubar>
@@ -47,6 +48,10 @@ class MainMenu(GObject.GObject):
                            None,
                            (),
                            ),
+        "help-help" : (GObject.SIGNAL_RUN_LAST,
+                             None,
+                             (),
+                             ),
         "help-about" : (GObject.SIGNAL_RUN_LAST,
                              None,
                              (),
@@ -64,6 +69,8 @@ class MainMenu(GObject.GObject):
                 ("FilePreferences", Gtk.STOCK_PREFERENCES, _("Preferences"), None, _("Open preferences"),
                                self.cb_file_preferences),
                 ("HelpMenu", None, _("Help")),
+                ("HelpHelp", None, _("Help"), None , _("Help"),
+                              self.cb_help_help),
                 ("HelpAbout", None, _("About"), None , _("About Kazam"),
                               self.cb_help_about)
             ])
@@ -79,6 +86,9 @@ class MainMenu(GObject.GObject):
 
     def cb_file_preferences(self, action):
         self.emit("file-preferences")
+
+    def cb_help_help(self, action):
+        self.emit("help-help")
 
     def cb_help_about(self, action):
         self.emit("help-about")
