@@ -391,7 +391,8 @@ class KazamApp(GObject.GObject):
                               mouse buttons.)
         """
         logger.info("GOT EVENT: {}, {}, {}".format(ev_type, action, value))
-        self.keypress_window.show(ev_type, value, action)
+        if self.keypress_window:
+            self.keypress_window.show(ev_type, value, action)
 
 
     #
