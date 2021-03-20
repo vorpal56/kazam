@@ -951,6 +951,9 @@ class KazamApp(GObject.GObject):
     #
 
     def run_counter(self):
+        if self.recording:
+            logger.debug("Already recording, not starting again.")
+            return
         #
         # Annoyances with the menus
         #
