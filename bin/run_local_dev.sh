@@ -7,5 +7,5 @@ find -iname '*.png' -type f -printf "ln -s '%f' '%P-symbolic'\n" | sed -e 's#.pn
 
 cd ../../bin
 export PYTHONPATH=..
-./kazam
+./kazam "$@"
 
