@@ -73,7 +73,7 @@ class CountdownWindow(GObject.GObject):
         # setup libpixman via ctypes
         self.setupPixman(LIBPIXMAN_NAMES)
 
-        self.window = Gtk.Window(Gtk.WindowType.TOPLEVEL)
+        self.window = Gtk.Window(Gtk.WindowType.POPUP)
         self.window.connect("delete-event", Gtk.main_quit)
         self.window.connect("draw", self.onDraw)
         self.window.connect("screen-changed", self.onScreenChanged)
