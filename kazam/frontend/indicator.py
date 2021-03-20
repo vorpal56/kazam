@@ -111,7 +111,6 @@ class KazamSuperIndicator(GObject.GObject):
         # Setup keybindings - Hardcore way
         #
         try:
-            import gi
             gi.require_version('Keybinder', '3.0')
             from gi.repository import Keybinder
             logger.debug("Trying to bind hotkeys.")
@@ -176,13 +175,14 @@ try:
     from gi.repository import AppIndicator3
 
     class KazamIndicator(KazamSuperIndicator):
-        def __init__(self, silent = False):
+
+        def __init__(self, silent=False):
             super(KazamIndicator, self).__init__(silent)
             self.silent = silent
 
             self.indicator = AppIndicator3.Indicator.new("kazam",
-                             "kazam-stopped",
-                             AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
+                                                         "kazam-stopped",
+                                                         AppIndicator3.IndicatorCategory.APPLICATION_STATUS)
 
             self.indicator.set_menu(self.menu)
             self.indicator.set_attention_icon("kazam-recording")
@@ -191,6 +191,7 @@ try:
             if self.silent:
                 self.indicator.set_status(AppIndicator3.IndicatorStatus.PASSIVE)
             else:
+                # call set_status(ACTIVE) causes a "gdk_window_thaw_toplevel_updates: assertion 'window->update_and_descendants_freeze_count > 0' failed" error.
                 self.indicator.set_status(AppIndicator3.IndicatorStatus.ACTIVE)
 
         def hide_it(self):
@@ -254,7 +255,7 @@ except (ImportError, ValueError):
     #
     class KazamIndicator(KazamSuperIndicator):
 
-        def __init__(self, silent = False):
+        def __init__(self, silent=False):
             super(KazamIndicator, self).__init__()
             self.silent = silent
 

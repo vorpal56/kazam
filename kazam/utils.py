@@ -23,15 +23,18 @@
 import os
 import math
 import logging
+import time
+import datetime
 
 logger = logging.getLogger("Utils")
 
+
 def get_next_filename(sdir, prefix, ext):
-    for cnt in range(0, 99999):
-        fname = os.path.join(sdir, "{0}_{1}{2}".format(prefix,
-                                                       str(cnt).zfill(5),
-                                                       ext))
+    for _ in range(0, 99999):
+        now = '{0:%Y-%m-%d_%H-%M-%S}'.format(datetime.datetime.now())
+        fname = os.path.join(sdir, "{}_{}{}".format(prefix, now, ext))
         if os.path.isfile(fname):
+            time.sleep(1)
             continue
         else:
             return fname
@@ -42,3 +45,7 @@ def get_next_filename(sdir, prefix, ext):
 def in_circle(center_x, center_y, radius, x, y):
     dist = math.sqrt((center_x - x) ** 2 + (center_y - y) ** 2)
     return dist <= radius
+
+
+def get_by_idx(lst, index):
+    return filter(lambda s: s[0] == index, lst)

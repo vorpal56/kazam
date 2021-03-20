@@ -8,6 +8,9 @@ Kazam is always available from [Launchpad](https://launchpad.net/kazam).
 ## Trying it out without installing
 
 ```shell
+git clone https://github.com/niknah/kazam
+cd kazam
+pip install Xlib
 bash bin/run_local_dev.sh
 ```
 

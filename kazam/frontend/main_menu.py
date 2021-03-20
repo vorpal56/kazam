@@ -92,6 +92,3 @@ class MainMenu(GObject.GObject):
 
     def cb_help_about(self, action):
         self.emit("help-about")
-
-
-
