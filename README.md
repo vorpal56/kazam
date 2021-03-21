@@ -10,7 +10,7 @@ Kazam is always available from [Launchpad](https://launchpad.net/kazam).
 ```shell
 git clone https://github.com/niknah/kazam
 cd kazam
-pip install Xlib
+pip install Xlib PyGTK Pycairo PyGObject
 bash bin/run_local_dev.sh
 ```
 
