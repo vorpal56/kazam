@@ -99,7 +99,7 @@ class KazamConfig(object):
         # For every section
         for section in self.DEFAULTS:
             # Add the section
-            self.add_section(section["name"])
+            self.config.add_section(section["name"])
             # And add every key in it, with its default value
             for key in section["keys"]:
                 value = section["keys"][key]
