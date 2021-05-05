@@ -94,11 +94,13 @@ class OutlineWindow(GObject.GObject):
         (x, y) = self.window.get_position()
         (w, h) = self.window.get_size()
         logger.debug("Showing outline window.")
-        self.window.show_all()
+        self.show()
         logger.debug("Outline window shown.")
 
     def show(self):
-        self.window.show_all()
+        # without compositing, a black window will appear
+        if self.compositing == True:
+            self.window.show_all()
 
     def hide(self):
         (x, y) = self.window.get_position()

@@ -108,6 +108,7 @@ class AreaWindow(GObject.GObject):
         else:
             logger.warning("Compositing window manager not found, expect the unexpected.")
             self.compositing = False
+            self.save_screenshot()
 
         (scr, x, y) = self.pntr_device.get_position()
         cur = scr.get_monitor_at_point(x, y)
@@ -320,16 +321,31 @@ class AreaWindow(GObject.GObject):
             self.window.hide()
             self.emit("area-canceled")
 
+
+    def show_all(self):
+        if self.compositing == False:
+            self.save_screenshot()
+            self.window.show_all()
+
+    def save_screenshot(self):
+        w = Gdk.get_default_root_window()
+        self.sz = w.get_geometry()[2:4]
+        self.pb =  Gdk.pixbuf_get_from_window(w, 0, 0, self.sz[0], self.sz[1])
+
     def cb_draw(self, widget, cr):
         (w, h) = self.window.get_size()
 
         if self.compositing:
             cr.set_source_rgba(0.0, 0.0, 0.0, 0.45)
+            cr.set_operator(cairo.OPERATOR_SOURCE)
+            cr.paint()
         else:
-            cr.set_source_rgb(0.5, 0.5, 0.5)
+            Gdk.cairo_set_source_pixbuf(cr, self.pb, 0, 0)
+            cr.paint()
+            cr.set_source_rgba(0, 0, 0, 0.5)
+            cr.set_operator(cairo.OPERATOR_OVER)
+            cr.paint()
 
-        cr.set_operator(cairo.OPERATOR_SOURCE)
-        cr.paint()
 
         # Draw the selection area
         cr.set_line_width(1)

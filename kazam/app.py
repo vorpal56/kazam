@@ -582,13 +582,13 @@ class KazamApp(GObject.GObject):
     def cb_record_area_clicked(self, widget):
         if self.area_window:
             logger.debug("Area mode clicked.")
-            self.area_window.window.show_all()
+            self.area_window.show_all()
             self.window.set_sensitive(False)
 
     def cb_record_window_clicked(self, widget):
         if self.select_window:
             logger.debug("Window mode clicked.")
-            self.select_window.window.show_all()
+            self.select_window.show_all()
             self.window.set_sensitive(False)
 
     def cb_area_selected(self, widget):
