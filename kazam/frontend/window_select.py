@@ -140,7 +140,7 @@ class SelectWindow(GObject.GObject):
     def show_all(self):
         if self.compositing == False:
             self.save_screenshot()
-            self.window.show_all()
+        self.window.show_all()
 
     def save_screenshot(self):
         w = Gdk.get_default_root_window()
