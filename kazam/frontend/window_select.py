@@ -73,7 +73,9 @@ class SelectWindow(GObject.GObject):
         self.dm = Gdk.Display.get_device_manager(self.disp)
         self.pntr_device = self.dm.get_client_pointer()
 
-        if self.visual is not None and self.screen.is_composited():
+        # i3 window manager cannot do fullscreen window transparency
+        # https://github.com/i3/i3/issues/4421
+        if self.visual is not None and self.screen.is_composited() and os.environ.get('XDG_SESSION_DESKTOP') != "i3":
             logger.debug("Compositing window manager detected.")
             self.window.set_visual(self.visual)
             self.compositing = True
