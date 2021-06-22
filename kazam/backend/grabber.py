@@ -120,8 +120,9 @@ class Grabber(GObject.GObject):
 
             cursor = Gdk.Cursor.new_for_display(Gdk.Display.get_default(), Gdk.CursorType.LEFT_PTR)
             c_picbuf = Gdk.Cursor.get_image(cursor)
-
-            if self.xid and prefs.capture_borders_pic:
+            if c_picbuf == None:
+                logger.debug("Cannot get_image of cursor.")
+            elif self.xid and prefs.capture_borders_pic:
                 pointer = app_win.get_device_position(pntr_device)
                 (px, py) = (pointer[1], pointer[2])
                 logger.debug("XID cursor: {0} {1}".format(px, py))
