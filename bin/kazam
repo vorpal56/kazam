@@ -98,6 +98,7 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--preferences",  action="store_true",  help="show preferences window")
     parser.add_argument("-g", "--godmode",      action="store_true",  help="god mode of capture")
     parser.add_argument("-x", "--instance",     action="store_true",  help="spawn new instance")
+    parser.add_argument("-r", "--record",       action="store_true",  help="record video immediately on start")
 
     args = parser.parse_args()
     if args.debug:
@@ -130,6 +131,9 @@ if __name__ == "__main__":
         bus = dbus.SessionBus()
         instance = bus.request_name("org.kazam")
 
+        if args.record:
+            args.instance = True
+
         if not args.instance and instance != dbus.bus.REQUEST_NAME_REPLY_PRIMARY_OWNER:
             logger.debug("Getting existing instance ...")
             if args.preferences:
@@ -150,6 +154,8 @@ if __name__ == "__main__":
                 app = KazamApp(datadir, dist, args.debug, args.test, args.nosound, args.silent)
 
                 kazam_service = KazamService(app)
+                if args.record:
+                    app.run_counter()
 
     Gtk.main()
     logger.debug("Finishing ...")
