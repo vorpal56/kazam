@@ -459,6 +459,7 @@ class KazamApp(GObject.GObject):
                 self.area_window = AreaWindow()
                 self.tmp_sig1 = self.area_window.connect("area-selected", self.cb_area_selected)
                 self.tmp_sig2 = self.area_window.connect("area-canceled", self.cb_area_canceled)
+                self.window.iconify()
             self.record_mode = MODE_AREA
 
         if widget.get_name() == "MODE_AREA" and not widget.get_active():
@@ -608,6 +609,7 @@ class KazamApp(GObject.GObject):
                       self.area_window.g_endy,
                       self.area_window.width,
                       self.area_window.height)
+        self.window.deiconify()
         self.window.set_sensitive(True)
 
     def cb_area_canceled(self, widget):
