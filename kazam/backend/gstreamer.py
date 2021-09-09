@@ -249,11 +249,10 @@ class Screencast(GObject.GObject):
         #
         # Broadcasting forces H264 codec
         #
+        self.video_convert_caps = Gst.caps_from_string("video/x-raw, format=(string)I420")
+        self.f_video_convert_caps = Gst.ElementFactory.make("capsfilter", "vid_convert_caps")
+        self.f_video_convert_caps.set_property("caps", self.video_convert_caps)
         if self.mode == MODE_BROADCAST:
-
-            self.video_convert_caps = Gst.caps_from_string("video/x-raw, format=(string)I420")
-            self.f_video_convert_caps = Gst.ElementFactory.make("capsfilter", "vid_convert_caps")
-            self.f_video_convert_caps.set_property("caps", self.video_convert_caps)
 
             self.video_bitrate = 5800
             self.video_enc = Gst.ElementFactory.make(CODEC_LIST[CODEC_H264][1], "video_encoder")
@@ -271,6 +270,7 @@ class Screencast(GObject.GObject):
             self.mux.set_property("streamable", True)
 
         else:
+
             if prefs.codec is not CODEC_RAW:
                 self.video_enc = Gst.ElementFactory.make(CODEC_LIST[prefs.codec][1], "video_encoder")
 
@@ -441,6 +441,8 @@ class Screencast(GObject.GObject):
         if prefs.codec is not CODEC_RAW or self.mode == MODE_BROADCAST:
             self.pipeline.add(self.video_enc)
 
+        if self.mode == MODE_SCREENCAST:
+            self.pipeline.add(self.f_video_convert_caps)
         if self.mode == MODE_BROADCAST:
             self.pipeline.add(self.f_video_convert_caps)
             self.pipeline.add(self.video_parse)
@@ -538,8 +540,15 @@ class Screencast(GObject.GObject):
                 ret = self.f_video_parse_caps.link(self.q_video_out)
                 logger.debug("Link f_video_parse_caps -> q_video_out {}".format(ret))
             else:
-                ret = self.video_convert.link(self.video_enc)
-                logger.debug("Link video_convert -> video_enc {}".format(ret))
+                if self.mode == MODE_SCREENCAST:
+                    ret = self.video_convert.link(self.f_video_convert_caps)
+                    logger.debug("Link video_convert f_video_convert_caps {}".format(ret))
+                    ret = self.f_video_convert_caps.link(self.video_enc)
+                    logger.debug("Link f_video_convert_caps -> video_enc {}".format(ret))
+                else:
+                    ret = self.video_convert.link(self.video_enc)
+                    logger.debug("Link video_convert -> video_enc {}".format(ret))
+
                 ret = self.video_enc.link(self.q_video_out)
                 logger.debug("Link video_enc -> q_video_out {}".format(ret))
 
