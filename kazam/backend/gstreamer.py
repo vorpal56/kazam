@@ -501,11 +501,18 @@ class Screencast(GObject.GObject):
             self.cam_xid = self.cam_window.xid
 
             # Build the pipeline
-            self.q_video_src.link(self.tee)
-            self.tee.link(self.video_rate)
-            self.tee.link(self.video_flip)
-            self.video_flip.link(self.screen_queue)
-            self.screen_queue.link(self.screen_sink)
+            ret = self.q_video_src.link(self.tee)
+            logger.debug("Link q_video_src -> tee: {}".format(ret))
+            ret = self.tee.link(self.video_rate)
+            logger.debug("Link tee -> video_rate: {}".format(ret))
+            ret = self.tee.link(self.video_flip)
+            logger.debug("Link tee -> video_flip: {}".format(ret))
+            ret = self.video_flip.link(self.screen_queue)
+            logger.debug("Link video_flip -> screen_queue: {}".format(ret))
+            ret = self.screen_queue.link(self.screen_sink)
+            logger.debug("Link screen_queue -> screen_sink: {}".format(ret))
+            ret = self.video_rate.link(self.video_convert)
+            logger.debug("Link video_rate -> video_convert: {}".format(ret))
 
         else:
             if self.crop_vid and self.mode is not MODE_BROADCAST:
