@@ -46,6 +46,7 @@ class KazamConfig(object):
                          "capture_borders_pic":    "True",
                          "framerate":              "15",
                          "countdown_splash":       "True",
+                         "i420":                   "False",
                          "last_x":                 "60",
                          "last_y":                 "25",
                          "advanced":               "0",

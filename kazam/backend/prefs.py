@@ -74,6 +74,7 @@ class Prefs():
         self.microphone_volume = 0
 
         self.countdown_splash = True
+        self.i420 = False
         self.silent_start = False
 
         self.capture_keys = False
@@ -256,6 +257,7 @@ class Prefs():
         self.capture_borders_pic = self.config.getboolean("main", "capture_borders_pic")
 
         self.countdown_splash = self.config.getboolean("main", "countdown_splash")
+        self.i420 = self.config.getboolean("main", "i420")
 
         self.autosave_video = self.config.getboolean("main", "autosave_video")
         self.autosave_video_dir = self.config.get("main", "autosave_video_dir")
@@ -335,6 +337,7 @@ class Prefs():
         self.config.set("main", "webcam_source", self.webcam_source)
 
         self.config.set("main", "countdown_splash", self.countdown_splash)
+        self.config.set("main", "i420", self.i420)
         self.config.set("main", "counter", self.countdown_timer)
         self.config.set("main", "codec", self.codec)
         self.config.set("main", "framerate", self.framerate)

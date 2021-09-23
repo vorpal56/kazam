@@ -170,6 +170,11 @@ class Preferences(GObject.GObject):
         else:
             self.switch_countdown_splash.set_active(False)
 
+        if prefs.i420:
+            self.switch_i420.set_active(True)
+        else:
+            self.switch_i420.set_active(False)
+
         self.spinbutton_framerate.set_value(prefs.framerate)
 
         if prefs.autosave_video:
@@ -263,6 +268,10 @@ class Preferences(GObject.GObject):
     def cb_switch_countdown_splash(self, widget, user_data):
         prefs.countdown_splash = widget.get_active()
         logger.debug("Countdown splash: {0}.".format(prefs.countdown_splash))
+
+    def cb_switch_i420(self, widget, user_data):
+        prefs.i420 = widget.get_active()
+        logger.debug("I420: {0}.".format(prefs.i420))
 
     def cb_audio_changed(self, widget):
         logger.debug("Audio Changed.")
