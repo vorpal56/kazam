@@ -50,9 +50,13 @@ else:
 
 
 class Screencast(GObject.GObject):
-    __gsignals__ = {"flush-done": (GObject.SIGNAL_RUN_LAST,
+    __gsignals__ = {
+            "flush-done": (GObject.SIGNAL_RUN_LAST,
                     None,
                     (),),
+            "error": (GObject.SIGNAL_RUN_LAST,
+                    None,
+                    (GObject.TYPE_STRING,)),
                     }
 
     def __init__(self, mode):
@@ -116,6 +120,7 @@ class Screencast(GObject.GObject):
 
         self.bus = self.pipeline.get_bus()
         self.bus.add_signal_watch()
+        self.has_error = False
         self.bus.connect("message::eos", self.on_eos)
         self.bus.connect("message::error", self.on_error)
 
@@ -131,6 +136,8 @@ class Screencast(GObject.GObject):
             self.video_src = Gst.ElementFactory.make("ximagesrc", "video_src")
             logger.debug("ximagesrc selected as video source.")
         elif self.mode == MODE_WEBCAM:
+            if prefs.webcam_v4l2:
+                os.environ['GST_V4L2_USE_LIBV4L2']="1"
             self.video_src = Gst.ElementFactory.make("v4l2src", "video_src")
 
         if self.area:
@@ -152,8 +159,8 @@ class Screencast(GObject.GObject):
                 starty = 0
                 width = CAM_RESOLUTIONS[prefs.webcam_resolution][0]
                 height = CAM_RESOLUTIONS[prefs.webcam_resolution][1]
-                endx = CAM_RESOLUTIONS[prefs.webcam_resolution][0] - 1
-                endy = CAM_RESOLUTIONS[prefs.webcam_resolution][1] - 1
+                endx = CAM_RESOLUTIONS[prefs.webcam_resolution][0] 
+                endy = CAM_RESOLUTIONS[prefs.webcam_resolution][1] 
 
         if 'scale' in self.video_source:
             scale = self.video_source['scale']
@@ -167,10 +174,10 @@ class Screencast(GObject.GObject):
         # H264 requirement is that video dimensions are divisible by 2.
         # If they are not, we have to get rid of that extra pixel.
         #
-        if not abs(startx - endx) % 2 and prefs.codec == CODEC_H264:
+        if (abs(startx - endx) % 2)!=0 and prefs.codec == CODEC_H264:
             endx -= 1
 
-        if not abs(starty - endy) % 2 and prefs.codec == CODEC_H264:
+        if (abs(starty - endy) % 2)!=0 and prefs.codec == CODEC_H264:
             endy -= 1
 
         logger.debug("Coordinates SX: {0} SY: {1} EX: {2} EY: {3}".format(startx, starty, endx, endy))
@@ -226,12 +233,20 @@ class Screencast(GObject.GObject):
             elif self.mode == MODE_WEBCAM:
                 self.video_src.set_property("device", prefs.webcam_sources[prefs.webcam_source][0])
                 logger.debug("Webcam source: {}".format(prefs.webcam_sources[prefs.webcam_source][0]))
-                caps_str = "video/x-raw, framerate={}/1, width={}, height={}"
-                self.video_caps = Gst.caps_from_string(caps_str.format(int(prefs.framerate),
-                                                                       width,
-                                                                       height))
+                caps_str_format = "video/x-raw, framerate={}/1, width={}, height={}"
+                caps_str = caps_str_format.format(int(prefs.framerate), width, height)
+                logger.debug("Webcam caps_str: "+caps_str)
+                self.video_caps = Gst.caps_from_string(caps_str)
                 self.f_video_caps = Gst.ElementFactory.make("capsfilter", "vid_filter")
-                self.f_video_caps.set_property("caps", self.video_caps)
+
+                # Some cameras only work on libv4l2 and need the exact resolution + frame rate
+                # idVendor           0x04f2 Chicony Electronics Co., Ltd
+                #  idProduct          0xb67c 
+                # 
+                # https://gstreamer.freedesktop.org/documentation/video4linux2/v4l2src.html?gi-language=c
+                #  gstreamer.v4l2src: Since 1.14, the use of libv4l2 has been disabled due to major bugs in the emulation layer. 
+                if not prefs.webcam_v4l2:
+                    self.f_video_caps.set_property("caps", self.video_caps)
 
                 if prefs.webcam_show_preview is True:
                     self.video_flip = Gst.ElementFactory.make("videoflip", "video_flip")
@@ -681,7 +696,13 @@ class Screencast(GObject.GObject):
         self.emit("flush-done")
 
     def on_error(self, bus, message):
-        logger.debug("Received an error message: %s", message.parse_error()[1])
+        message_str = message.parse_error()[1]
+        logger.debug("Received an error message: %s", message_str)
+        self.has_error = True
+        self.stop_recording()
+        self.emit("error", message_str)
+        # gstreamer doesn't send a message::eos after an error, but the stream has ended.
+        self.bus.emit("message::eos", Gst.Message.new_eos())
 
     def on_sync_message(self, bus, message):
         if message.get_structure().get_name() == 'prepare-window-handle':
@@ -697,10 +718,16 @@ class GWebcam(GObject.GObject):
         self.xid = None
 
     def start(self):
+        logger.debug("GWebCam.start")
         width = CAM_RESOLUTIONS[prefs.webcam_resolution][0]
         height = CAM_RESOLUTIONS[prefs.webcam_resolution][1]
+        videoconvert=''
+        if prefs.webcam_v4l2:
+            os.environ['GST_V4L2_USE_LIBV4L2']="1"
+            videoconvert=' ! videoconvert ';
 
-        self.pipeline = Gst.parse_launch ("v4l2src ! videoscale ! video/x-raw,framerate={}/1,width={},height={} ! autovideosink".format(int(prefs.framerate), width, height))
+        self.pipeline = Gst.parse_launch ("v4l2src {} ! videoscale ! video/x-raw,framerate={}/1,width={},height={} ! autovideosink".format(videoconvert,int(prefs.framerate), width, height))
+
         self.bus = self.pipeline.get_bus()
         self.bus.add_signal_watch()
         self.bus.connect("message::eos", self.on_eos)
@@ -717,6 +744,7 @@ class GWebcam(GObject.GObject):
         self.pipeline.set_state(Gst.State.PLAYING)
 
     def close(self):
+        logger.debug("GWebCam.close")
         self.pipeline.send_event(Gst.Event.new_eos())
 
     def on_eos(self, bus, message):

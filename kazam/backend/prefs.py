@@ -97,6 +97,11 @@ class Prefs():
         self.autosave_picture = False
         self.autosave_picture_dir = None
         self.autosave_picture_file = None
+
+        self.autosave_webcam = False
+        self.autosave_webcam_dir = None
+        self.autosave_webcam_file = None
+
         self.shutter_sound = True
         self.shutter_type = 0
         self.shutter_sound_file = ""
@@ -126,6 +131,7 @@ class Prefs():
         self.webcam_show_preview = True
         self.webcam_preview_pos = 1
         self.webcam_resolution = 0
+        self.webcam_v4l2 = True
 
         self.yt_stream = ''
         self.yt_server = ''
@@ -267,6 +273,11 @@ class Prefs():
         self.autosave_picture_dir = self.config.get("main", "autosave_picture_dir")
         self.autosave_picture_file = self.config.get("main", "autosave_picture_file")
 
+        self.autosave_webcam = self.config.getboolean("main", "autosave_webcam")
+        self.autosave_webcam_dir = self.config.get("main", "autosave_webcam_dir")
+        self.autosave_webcam_file = self.config.get("main", "autosave_webcam_file")
+        self.webcam_v4l2 = self.config.getboolean("main", "webcam_v4l2")
+
         self.shutter_sound = self.config.getboolean("main", "shutter_sound")
         self.shutter_type = int(self.config.get("main", "shutter_type"))
 
@@ -335,6 +346,7 @@ class Prefs():
             self.config.set("main", "audio2_source", self.audio2_source)
 
         self.config.set("main", "webcam_source", self.webcam_source)
+        self.config.set("main", "webcam_v4l2", self.webcam_v4l2)
 
         self.config.set("main", "countdown_splash", self.countdown_splash)
         self.config.set("main", "i420", self.i420)
@@ -347,6 +359,9 @@ class Prefs():
         self.config.set("main", "autosave_picture", self.autosave_picture)
         self.config.set("main", "autosave_picture_dir", self.autosave_picture_dir)
         self.config.set("main", "autosave_picture_file", self.autosave_picture_file)
+        self.config.set("main", "autosave_webcam", self.autosave_webcam)
+        self.config.set("main", "autosave_webcam_dir", self.autosave_webcam_dir)
+        self.config.set("main", "autosave_webcam_file", self.autosave_webcam_file)
         self.config.set("main", "shutter_sound", self.shutter_sound)
         self.config.set("main", "shutter_type", self.shutter_type)
 
@@ -563,7 +578,8 @@ CAM_RESOLUTIONS = [
     [320, 240],
     [640, 480],
     [800, 600],
-    [1024, 768]
+    [1024, 768],
+    [1280, 720]
 ]
 
 # Area resize handle cursors

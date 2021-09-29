@@ -438,6 +438,7 @@ class KazamApp(GObject.GObject):
             self.toolbar_aux.set_sensitive(False)
             self.indicator.menuitem_start.set_label(_("Start recording"))
             self.btn_record.set_label(_("Capture"))
+        self.cb_check_webcam_checkbox()
 
     #
     # Record mode toggles
@@ -737,6 +738,9 @@ class KazamApp(GObject.GObject):
             self.indicator.show_it()
 
     def cb_stop_request(self, widget):
+        self.stop_request()
+
+    def stop_request(self):
         self.recording = False
 
         if self.outline_window:
@@ -775,7 +779,24 @@ class KazamApp(GObject.GObject):
                                       prefs.autosave_video_file,
                                       CODEC_LIST[prefs.codec][3])
 
-            shutil.move(self.tempfile, fname)
+            if os.path.isfile(self.tempfile):
+                shutil.move(self.tempfile, fname)
+            else:
+                logger.error("Cannot find autosave file: {}".format(self.tempfile))
+
+            self.window.set_sensitive(True)
+            self.window.show()
+            self.window.present()
+        elif self.main_mode == MODE_WEBCAM and prefs.autosave_webcam:
+            logger.debug("Autosaving enabled.")
+            fname = get_next_filename(prefs.autosave_webcam_dir,
+                                      prefs.autosave_webcam_file,
+                                      CODEC_LIST[prefs.codec][3])
+
+            if os.path.isfile(self.tempfile):
+                shutil.move(self.tempfile, fname)
+            else:
+                logger.error("Cannot find autosave file: {}".format(self.tempfile))
 
             self.window.set_sensitive(True)
             self.window.show()
@@ -919,9 +940,15 @@ class KazamApp(GObject.GObject):
         prefs.countdown_timer = widget.get_value_as_int()
         logger.debug("Start delay now: {0}".format(prefs.countdown_timer))
 
+    def cb_check_webcam_checkbox(self):
+        self.check_webcam_widget(self.chk_webcam)
+
     def cb_check_webcam(self, widget):
+        self.check_webcam_widget(widget)
+
+    def check_webcam_widget(self, widget):
         name = Gtk.Buildable.get_name(widget)
-        if widget.get_active() is True:
+        if widget.get_active() is True and self.main_mode == MODE_SCREENCAST:
             if self.cam is None:
                 logger.debug("Turning ON webcam window.")
                 self.cam = GWebcam()
@@ -947,6 +974,16 @@ class KazamApp(GObject.GObject):
         elif name == "chk_keypresses_broadcast":
             prefs.capture_keys_broadcast = widget.get_active()
         logger.debug("Toggled {}: {}.".format(name, widget.get_active()))
+
+    def cb_recorder_error(self, recorder, message_str):
+        if 'not-negotiated' in message_str:
+            md = Gtk.MessageDialog(self.window,
+                0, Gtk.MessageType.ERROR,
+                Gtk.ButtonsType.CLOSE, "Camera error.  Try enabling libv4l2 in preferences -> Webcam\n\n{}".format(message_str) )
+            md.run()
+            md.destroy()
+            self.stop_request()
+
 
     #
     # Other somewhat useful stuff ...
@@ -1025,7 +1062,7 @@ class KazamApp(GObject.GObject):
         prefs.current_screen = screen
 
         if self.main_mode == MODE_WEBCAM:
-            video_source = CAM_RESOLUTIONS[prefs.webcam_source]
+            video_source = CAM_RESOLUTIONS[prefs.webcam_resolution]
         elif self.record_mode == MODE_ALL:
             video_source = HW.combined_screen
         else:
@@ -1041,6 +1078,7 @@ class KazamApp(GObject.GObject):
                                         audio_channels,
                                         audio2_channels)
 
+            self.recorder.connect("error", self.cb_recorder_error)
             self.recorder.connect("flush-done", self.cb_flush_done)
 
         elif self.main_mode == MODE_SCREENSHOT:

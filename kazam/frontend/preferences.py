@@ -83,6 +83,9 @@ class Preferences(GObject.GObject):
         if prefs.autosave_video_dir is None:
             self.filechooser_video.set_current_folder(prefs.video_dest)
 
+        if prefs.autosave_webcam_dir is None:
+            self.filechooser_webcam.set_current_folder(prefs.video_dest)
+
         self.populate_codecs()
         if prefs.sound:
             self.populate_audio_sources()
@@ -219,7 +222,23 @@ class Preferences(GObject.GObject):
             self.switch_webcam_preview.set_active(False)
 
         self.entry_autosave_picture.set_text(prefs.autosave_picture_file)
-        self.filechooser_picture.set_current_folder(prefs.autosave_picture_dir)
+        if prefs.autosave_picture_dir is not None:
+            self.filechooser_picture.set_current_folder(prefs.autosave_picture_dir)
+
+        self.switch_webcam_v4l2.set_active(prefs.webcam_v4l2)
+
+        if prefs.autosave_webcam:
+            self.switch_autosave_webcam.set_active(True)
+            self.filechooser_webcam.set_sensitive(True)
+            self.entry_autosave_webcam.set_sensitive(True)
+        else:
+            self.switch_autosave_webcam.set_active(False)
+            self.filechooser_webcam.set_sensitive(False)
+            self.entry_autosave_webcam.set_sensitive(False)
+
+        self.entry_autosave_webcam.set_text(prefs.autosave_webcam_file)
+
+        self.filechooser_webcam.set_current_folder(prefs.autosave_webcam_dir)
 
         self.combobox_broadcast_dst.set_active(prefs.broadcast_dst)
 
@@ -432,6 +451,30 @@ class Preferences(GObject.GObject):
     def cb_combobox_webcam_resolution_changed(self, widget):
         prefs.webcam_resolution = self.combobox_webcam_resolution.get_active()
         logger.debug("Webcam resolution: {}".format(prefs.webcam_resolution))
+
+    def cb_switch_webcam_v4l2(self, widget, user_data):
+        prefs.webcam_v4l2 = widget.get_active()
+        logger.debug("V4L2 for Webcam: {0}.".format(prefs.webcam_v4l2))
+
+    def cb_switch_autosave_webcam(self, widget, user_data):
+        prefs.autosave_webcam = widget.get_active()
+        logger.debug("Autosave for Webcam: {0}.".format(prefs.autosave_webcam))
+
+        if prefs.autosave_webcam:
+            self.filechooser_webcam.set_sensitive(True)
+            self.entry_autosave_webcam.set_sensitive(True)
+        else:
+            self.filechooser_webcam.set_sensitive(False)
+            self.entry_autosave_webcam.set_sensitive(False)
+
+    def cb_filechooser_webcam(self, widget):
+        prefs.autosave_webcam_dir = self.filechooser_webcam.get_filename()
+        logger.debug("Autosave webcam folder set to: {0}".format(prefs.autosave_webcam_dir))
+
+    def cb_entry_autosave_webcam(self, widget):
+        prefs.autosave_webcam_file = widget.get_text()
+        logger.debug("Webcam autosave file set to: {0}".format(prefs.autosave_webcam_file))
+
 
     #
     # Broadcast callbacks
