@@ -75,7 +75,7 @@ if __name__ == "__main__":
 
     try:
         import distro
-        dist = distro.linux_distribution()
+        dist = (distro.name(), distro.version(), distro.codename() )
     except:
         # Fallback to the almighty Ubuntu 12.10 ;)
         dist = ('Ubuntu', '12.10', 'quantal')
