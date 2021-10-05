@@ -982,7 +982,7 @@ class KazamApp(GObject.GObject):
                 Gtk.ButtonsType.CLOSE, "Camera error.  Try enabling libv4l2 in preferences -> Webcam\n\n{}".format(message_str) )
             md.run()
             md.destroy()
-            self.stop_request()
+        self.stop_request()
 
 
     #
