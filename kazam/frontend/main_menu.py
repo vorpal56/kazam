@@ -24,19 +24,77 @@ from gettext import gettext as _
 from gi.repository import Gtk, GObject
 
 MENUBAR = """
-    <ui>
-        <menubar name='MenuBar'>
-            <menu action='FileMenu'>
-                <menuitem action='FilePreferences' />
-                <menuitem action='FileQuit' />
-            </menu>
-            <menu action='HelpMenu'>
-                <menuitem action='HelpHelp' />
-                <menuitem action='HelpAbout' />
-            </menu>
-        </menubar>
-</ui>
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.38.2 -->
+<interface>
+  <requires lib="gtk+" version="3.24"/>
+  <object class="GtkMenuBar" id="MenuBar">
+    <property name="visible">True</property>
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkMenuItem">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="label" translatable="yes">_File</property>
+        <property name="use-underline">True</property>
+        <child type="submenu">
+          <object class="GtkMenu">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkMenuItem" id="FilePreferences">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label">_Preferences</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="FileQuit">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label">_Quit</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkMenuItem">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="label" translatable="yes">_Help</property>
+        <property name="use-underline">True</property>
+        <child type="submenu">
+          <object class="GtkMenu">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkMenuItem" id="HelpAbout">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label">_About</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+            <child>
+              <object class="GtkMenuItem" id="HelpHelp">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label">_Help</property>
+                <property name="use-underline">True</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>
 """
+
 
 class MainMenu(GObject.GObject):
     __gsignals__ = {
@@ -61,24 +119,13 @@ class MainMenu(GObject.GObject):
     def __init__(self):
         GObject.GObject.__init__(self)
 
-        self.action_group = Gtk.ActionGroup("kazam_actions")
-        self.action_group.add_actions([
-                ("FileMenu", None, _("File")),
-                ("FileQuit", Gtk.STOCK_QUIT, _("Quit"), None, _("Quit Kazam"),
-                               self.cb_file_quit),
-                ("FilePreferences", Gtk.STOCK_PREFERENCES, _("Preferences"), None, _("Open preferences"),
-                               self.cb_file_preferences),
-                ("HelpMenu", None, _("Help")),
-                ("HelpHelp", None, _("Help"), None , _("Help"),
-                              self.cb_help_help),
-                ("HelpAbout", None, _("About"), None , _("About Kazam"),
-                              self.cb_help_about)
-            ])
-
-        self.uimanager = Gtk.UIManager()
-        self.uimanager.add_ui_from_string(MENUBAR)
-        self.uimanager.insert_action_group(self.action_group)
-        self.menubar = self.uimanager.get_widget("/MenuBar")
+        self.builder = Gtk.Builder()
+        self.builder.add_from_string(MENUBAR)
+        self.builder.get_object('HelpHelp').connect('activate', self.cb_help_help)
+        self.builder.get_object('HelpAbout').connect('activate', self.cb_help_about)
+        self.builder.get_object('FilePreferences').connect('activate', self.cb_file_preferences)
+        self.builder.get_object('FileQuit').connect('activate', self.cb_file_quit)
+        self.menubar = self.builder.get_object("MenuBar")
 
 
     def cb_file_quit(self, action):

@@ -28,7 +28,6 @@
     <property name="resizable">False</property>
     <property name="window_position">mouse</property>
     <property name="gravity">south-east</property>
-    <property name="has_resize_grip">False</property>
     <signal name="delete-event" handler="cb_delete_event" swapped="no"/>
     <child>
       <object class="GtkNotebook" id="notebook1">
@@ -36,23 +35,23 @@
         <property name="can_focus">True</property>
         <property name="halign">start</property>
         <property name="valign">start</property>
-        <property name="margin_left">15</property>
-        <property name="margin_right">15</property>
+        <property name="margin_start">15</property>
+        <property name="margin_end">15</property>
         <property name="margin_top">15</property>
         <property name="margin_bottom">15</property>
         <child>
           <object class="GtkBox" id="box1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">6</property>
-            <property name="margin_right">6</property>
+            <property name="margin_start">6</property>
+            <property name="margin_end">6</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkGrid" id="grid6">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -221,8 +220,8 @@ audio-volume-medium</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -287,8 +286,8 @@ audio-volume-medium</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -421,8 +420,8 @@ audio-volume-medium</property>
           <object class="GtkBox" id="box2">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">6</property>
-            <property name="margin_right">6</property>
+            <property name="margin_start">6</property>
+            <property name="margin_end">6</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkGrid" id="grid4">
@@ -430,8 +429,8 @@ audio-volume-medium</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">center</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -487,8 +486,8 @@ audio-volume-medium</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -622,8 +621,8 @@ audio-volume-medium</property>
           <object class="GtkBox" id="box3">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">6</property>
-            <property name="margin_right">6</property>
+            <property name="margin_start">6</property>
+            <property name="margin_end">6</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkGrid" id="grid2">
@@ -631,8 +630,8 @@ audio-volume-medium</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -720,8 +719,8 @@ audio-volume-medium</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -854,15 +853,15 @@ audio-volume-medium</property>
           <object class="GtkBox" id="box5">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">6</property>
-            <property name="margin_right">6</property>
+            <property name="margin_start">6</property>
+            <property name="margin_end">6</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkGrid" id="grid12">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -922,8 +921,8 @@ audio-volume-medium</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -1041,8 +1040,8 @@ Server URL in the entry fields.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -1149,8 +1148,8 @@ Server URL in the entry fields.</property>
           <object class="GtkBox" id="box4">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_left">6</property>
-            <property name="margin_right">6</property>
+            <property name="margin_start">6</property>
+            <property name="margin_end">6</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="GtkGrid" id="grid7">
@@ -1158,8 +1157,8 @@ Server URL in the entry fields.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
@@ -1353,8 +1352,8 @@ Server URL in the entry fields.</property>
                 <property name="can_focus">False</property>
                 <property name="halign">start</property>
                 <property name="valign">start</property>
-                <property name="margin_left">12</property>
-                <property name="margin_right">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
                 <property name="margin_top">12</property>
                 <property name="margin_bottom">12</property>
                 <property name="row_spacing">6</property>
