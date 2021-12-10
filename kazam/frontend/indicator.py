@@ -137,7 +137,7 @@ class KazamSuperIndicator(GObject.GObject):
                 self.menuitem_pause.set_active(False)
         elif action == "show-request" and not self.recording:
             self.emit("indicator-show-request")
-        elif action == "quit-request" and not self.recording:
+        elif action == "quit-request":
             self.emit("indicator-quit-request")
 
     def on_menuitem_pause_activate(self, menuitem):

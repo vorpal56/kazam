@@ -87,6 +87,7 @@ class KazamApp(GObject.GObject):
         prefs.silent = silent
         prefs.sound = sound
 
+        self.quit_requested = False
         self.setup_translations()
 
         if prefs.sound:
@@ -350,6 +351,7 @@ class KazamApp(GObject.GObject):
         if prefs.sound:
             prefs.get_audio_sources()
 
+        self.already_recording_message = ("""  Already recording, not starting again.\n""")
         self.instructions = ("""  SUPER-CTRL-W to toggle main window.\n"""
                              """  SUPER-CTRL-R to start recording.\n"""
                              """  SUPER-CTRL-F to finish recording.\n"""
@@ -394,6 +396,10 @@ class KazamApp(GObject.GObject):
         if self.keypress_window:
             self.keypress_window.show(ev_type, value, action)
 
+    def set_recording(self, recording):
+        self.recording = recording
+        sensitive = not recording
+        self.window.set_sensitive(sensitive)
 
     #
     # Mode of operation toggles
@@ -401,6 +407,10 @@ class KazamApp(GObject.GObject):
 
     def cb_main_toggled(self, widget):
         # Here be defaults
+        if self.recording:
+            logger.debug("Cannot change recording mode if we're already recording.")
+            return
+
         self.toolbar_aux.set_sensitive(True)
         self.chk_borders_pic.set_sensitive(True)
 
@@ -650,6 +660,10 @@ class KazamApp(GObject.GObject):
 
     def cb_quit_request(self, indicator):
         logger.debug("Quit requested.")
+        self.quit_requested = True
+        if self.recording and self.stop_request() is True:
+            return
+
         # Restore cursor, just in case if by some chance stays set to cross-hairs
         self.gdk_win.set_cursor(self.default_cursor)
         (prefs.main_x, prefs.main_y) = self.window.get_position()
@@ -741,7 +755,7 @@ class KazamApp(GObject.GObject):
         self.stop_request()
 
     def stop_request(self):
-        self.recording = False
+        self.set_recording(False)
 
         if self.outline_window:
             self.outline_window.hide()
@@ -771,6 +785,8 @@ class KazamApp(GObject.GObject):
             self.tempfile = self.recorder.get_tempfile()
             logger.debug("Recorded tmp file: {0}".format(self.tempfile))
             logger.debug("Waiting for data to flush.")
+            return True
+        return False
 
     def cb_flush_done(self, widget):
         if self.main_mode == MODE_SCREENCAST and prefs.autosave_video:
@@ -863,6 +879,8 @@ class KazamApp(GObject.GObject):
         self.window.show_all()
         self.window.present()
         self.window.move(prefs.main_x, prefs.main_y)
+        if self.quit_requested is True:
+            self.cb_quit_request(None)
 
     def cb_save_cancel(self, widget):
         try:
@@ -878,6 +896,8 @@ class KazamApp(GObject.GObject):
         self.window.show_all()
         self.window.present()
         self.window.move(prefs.main_x, prefs.main_y)
+        if self.quit_requested is True:
+            self.cb_quit_request(None)
 
     def cb_help_about(self, widget):
         AboutDialog(self.icons)
@@ -992,6 +1012,13 @@ class KazamApp(GObject.GObject):
     def run_counter(self):
         if self.recording:
             logger.debug("Already recording, not starting again.")
+            messagedialog = Gtk.MessageDialog(parent=self.window,
+                flags=Gtk.DialogFlags.MODAL,
+                type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.OK,
+                message_format=self.already_recording_message)
+            messagedialog.run()
+            messagedialog.destroy()
             return
         #
         # Annoyances with the menus
@@ -1092,7 +1119,7 @@ class KazamApp(GObject.GObject):
         self.countdown.connect("counter-finished", self.cb_counter_finished)
         logger.debug("Starting counter.")
         self.countdown.run(prefs.countdown_timer)
-        self.recording = True
+        self.set_recording(True)
         logger.debug("Hiding main window.")
         self.window.hide()
         if self.main_mode == MODE_SCREENCAST or self.main_mode == MODE_SCREENSHOT:
