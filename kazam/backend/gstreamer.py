@@ -174,10 +174,10 @@ class Screencast(GObject.GObject):
         # H264 requirement is that video dimensions are divisible by 2.
         # If they are not, we have to get rid of that extra pixel.
         #
-        if (abs(startx - endx) % 2)!=0 and prefs.codec == CODEC_H264:
+        if not (abs(startx - endx) % 2)!=0 and prefs.codec == CODEC_H264:
             endx -= 1
 
-        if (abs(starty - endy) % 2)!=0 and prefs.codec == CODEC_H264:
+        if not (abs(starty - endy) % 2)!=0 and prefs.codec == CODEC_H264:
             endy -= 1
 
         logger.debug("Coordinates SX: {0} SY: {1} EX: {2} EY: {3}".format(startx, starty, endx, endy))
