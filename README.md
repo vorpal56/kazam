@@ -131,4 +131,4 @@ Your next best bet is HUFFYUV format, which is a little bit friendlier on disk b
 
 ## Debugging & reporting problems
 
-If you encounter a bug or any kind of unexpected behavior please try to reproduce it while you run Kazam from standard terminal with --debug option. Use Launchpad to [report bugs](https://bugs.launchpad.net/kazam/+filebug) and include generated output.
+If you encounter a bug or any kind of unexpected behavior please try to reproduce it while you run Kazam from standard terminal with `GST_DEBUG=7 kazam --debug`. Use Launchpad to [report bugs](https://bugs.launchpad.net/kazam/+filebug) and include generated output.
