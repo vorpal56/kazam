@@ -788,6 +788,19 @@ class KazamApp(GObject.GObject):
             return True
         return False
 
+    def AskSaveRecording(self):
+        self.done_recording = DoneRecording(self.icons,
+                                            self.tempfile,
+                                            prefs.codec,
+                                            self.old_vid_path)
+        logger.debug("Done Recording initialized.")
+        self.done_recording.connect("save-done", self.cb_save_done)
+        self.done_recording.connect("save-cancel", self.cb_save_cancel)
+        self.done_recording.connect("edit-request", self.cb_edit_request)
+        logger.debug("Done recording signals connected.")
+        self.done_recording.show_all()
+        self.window.set_sensitive(False)
+
     def cb_flush_done(self, widget):
         if self.main_mode == MODE_SCREENCAST and prefs.autosave_video:
             logger.debug("Autosaving enabled.")
@@ -796,7 +809,11 @@ class KazamApp(GObject.GObject):
                                       CODEC_LIST[prefs.codec][3])
 
             if os.path.isfile(self.tempfile):
-                shutil.move(self.tempfile, fname)
+                try:
+                    shutil.move(self.tempfile, fname)
+                except Exception as e:
+                    logger.error("Could not autosave, ask for save location instead: {}".format(e))
+                    self.AskSaveRecording()
             else:
                 logger.error("Cannot find autosave file: {}".format(self.tempfile))
 
@@ -818,17 +835,7 @@ class KazamApp(GObject.GObject):
             self.window.show()
             self.window.present()
         elif self.main_mode == MODE_SCREENCAST or self.main_mode == MODE_WEBCAM:
-            self.done_recording = DoneRecording(self.icons,
-                                                self.tempfile,
-                                                prefs.codec,
-                                                self.old_vid_path)
-            logger.debug("Done Recording initialized.")
-            self.done_recording.connect("save-done", self.cb_save_done)
-            self.done_recording.connect("save-cancel", self.cb_save_cancel)
-            self.done_recording.connect("edit-request", self.cb_edit_request)
-            logger.debug("Done recording signals connected.")
-            self.done_recording.show_all()
-            self.window.set_sensitive(False)
+            self.AskSaveRecording()
 
         elif self.main_mode == MODE_BROADCAST:
             self.window.set_sensitive(True)
