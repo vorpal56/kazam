@@ -16,7 +16,7 @@ bash bin/run_local_dev.sh
 
 ## Installation - stable release
 
-If you are using Ubuntu then stable version (1.4.x) is available from universe repository. You can find it in Ubuntu Softare Center or install it from the terminal with the following command:
+If you are using Ubuntu then stable version (1.4.x) is available from universe repository. You can find it in Ubuntu Software Center or install it from the terminal with the following command:
 
 ```shell
 $ sudo apt-get install kazam
