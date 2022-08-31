@@ -22,6 +22,9 @@
 #       MA 02110-1301, USA.
 
 import os
+# Wayland needs GDK_BACKEND=x11 for the hotkeys to work
+if 'XDG_SESSION_TYPE' in os.environ and os.environ['XDG_SESSION_TYPE'] == 'wayland':
+    os.environ['GDK_BACKEND']='x11'
 import gi
 import sys
 import dbus
