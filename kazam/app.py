@@ -774,7 +774,8 @@ class KazamApp(GObject.GObject):
             if self.recording_paused:
                 self.recorder.unpause_recording()
             logger.debug("Stop request.")
-            self.recorder.stop_recording()
+            if self.recorder is not None:  # screenshot has no self.recorder
+                self.recorder.stop_recording()
             if (self.main_mode == MODE_SCREENCAST and prefs.capture_keys) or (self.main_mode == MODE_BROADCAST and prefs.capture_keys_broadcast):
                 if self.keypress_viewer:
                     self.keypress_viewer.stop()
@@ -782,7 +783,8 @@ class KazamApp(GObject.GObject):
                 self.keypress_window = None
                 self.keypress_viewer = None
 
-            self.tempfile = self.recorder.get_tempfile()
+            if self.recorder is not None:
+                self.tempfile = self.recorder.get_tempfile()
             logger.debug("Recorded tmp file: {0}".format(self.tempfile))
             logger.debug("Waiting for data to flush.")
             return True
